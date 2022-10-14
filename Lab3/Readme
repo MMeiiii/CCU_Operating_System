@@ -1,0 +1,28 @@
+Inline assembly
+
+學習目標:
+了解x86的組合語言形式
+了解gcc所支援的inline assembly的形式
+透過這個作業可以讓我們更專心在「組合語言」層級
+
+#include <stdio.h>
+int main(int argc, char** argv){
+  unsigned long msr;
+  asm volatile("rdtsc\n\t"  // Returns the time in EDX:EAX.
+  "shl $32, %%rdx\n\t"  // Shift the upper bits left.
+  "or %%rdx, %0"  // 'Or' in the lower bits.
+  :"=m"(msr)  //msr會放在記憶體
+  :
+  :"rdx");
+printf("msr: %lx\n", msr);
+}
+
+題目敘述:
+上面所列的程式的目的是輸出TSC的時間，在輸出部分為「:"=m"(msr)」的情況下，請修正組合語言，讓這個程式的能夠將TSC的值放入到msr變數中
+
+錯誤原因:
+此程式碼錯誤是因 msr 裡面並未有 RAX 的值，所以理所當然 or 出來結果錯誤。
+
+修改方法:
+先將 rax 的值放入到 msr 裡，因此當 msr 與 rdx or 時結果才會正確。並且最後告知 rax 這個暫存器也被弄髒了
+
