@@ -16,6 +16,7 @@ int main(int argc, char** argv){
   :"rdx");
 printf("msr: %lx\n", msr);
 }
+-asm.5.c
 
 題目敘述:
 上面所列的程式的目的是輸出TSC的時間，在輸出部分為「:"=m"(msr)」的情況下，請修正組合語言，讓這個程式的能夠將TSC的值放入到msr變數中
@@ -25,4 +26,28 @@ printf("msr: %lx\n", msr);
 
 修改方法:
 先將 rax 的值放入到 msr 裡，因此當 msr 與 rdx or 時結果才會正確。並且最後告知 rax 這個暫存器也被弄髒了
+
+指令:
+make --> 編譯
+./rdtsc --> 執行
+
+補充:
+#include <stdio.h>
+int main(int argc, char** argv) {
+    unsigned long msr;
+    asm volatile ( "rdtsc\n\t"  // Returns the time in EDX:EAX.
+        "shl $32, %%rdx\n\t"    // Shift the upper bits left.
+        "or %%rdx, %0"          // 'Or' in the lower bits.
+        : "=a" (msr)            //msr會放在rax暫存器
+        : 
+        : "rdx");
+    printf("msr: %lx\n", msr);
+}
+-asm.4.c
+rdtsc 功用以極小的代價獲得高精度的 CPU 時鐘週期數，並存在 EAX、EDX(為什麼這麼麻煩呢?因之前是 32 位元)。此程式碼先把 RDX shift 32 在與 msr進行 or 則可獲得
+(這邊可以特別注意=a，就是把 RAX 值給 msr，而%0 是指第一個此指 msr)
+
+
+
+
 
