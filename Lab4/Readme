@@ -40,3 +40,4 @@ next 的縮寫為 n ，程式碼中的每一行都可以對應到組語中的其
 continue 的縮寫是 c ，功能很容易懂，就會直接執行直到下一個 breakpoint ，當然你要記得先設定 breakpoint ，例如 b *0x00000450400
 
 資料來源:https://www.puritys.me/docs-blog/article-329-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-GDB-Debug.html
+Linux System Call:http://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
