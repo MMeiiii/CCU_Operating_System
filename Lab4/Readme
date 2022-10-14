@@ -1,0 +1,52 @@
+主題:系統呼叫
+學習目標：
+1.可將Linux kernel當成是運行於privileged mode的『函數庫』，如果要使用這個函數庫，必須使用『硬體提供的特殊指令』
+  (1)以X86為例，普通函數庫使用『call』和『ret』
+  (2)X86為例，呼叫Linux kernel要用『syscall』和『sysret』
+2.傳遞給核心的參數有哪些？
+3.如果是『複雜的參數』（例如：buffer），要怎樣傳遞給核心？
+
+*反組譯*
+GDB 全名為 Global Project DeBug，它可以用來檢視系統執行檔所執行的語法，以及記憶體地址所存的資料，可以用來 Debug ，反組譯，Hack 執行檔等等，
+Linux 與 Windows 系統皆可以使用這套軟體。
+
+gcc -o stdin_read stdin_read.c --> 編譯
+./stdin_read --> 執行
+gdb stdin_read --> 開始使用GDB
+
+##########GDB##########
+
+[disass]display assembly 列印出組語程式碼
+disass main
+disass /r main --> 加上 -r 這個參數，可以把組語的內容用 hex 的方式印出來。
+disass /m main --> 加上 -m 這個參數，可以印出程式原始碼內容，如果你想要這個功能，就得在編譯時先加上 debug 的參數。
+
+[b]breakpoint 設定程式暫停點
+b main --> 當程式執行到 main 這個 function 時，程式會暫停
+info b --> 列出所有設定過的 breakpoint
+delete 1 --> 移除第一個 breakpoint ，你必需先用 info b 來看看目前有哪些 breakpoint ，然後再用 delete 1 2 3 來移除 breakpoint 。
+
+[si] stepi 執行一行組語
+stepi 的縮寫是 si ， stepi 代表只執行一行組語指令，每執行一行就會自動暫停。
+
+[ni] nexti 執行一行組語
+nexti 的縮寫是 [ni] ， next 跟 stepi 很像，也是執行一行組語，但不同的是 ，如果 nexti 遇到要 call 另外一個 function ，那麼它會直接執行到該 function 結束，也就是說 nexti 不會暫停在其它的 function 。
+
+[n] next 執行到下一行 source code
+next 的縮寫為 n ，程式碼中的每一行都可以對應到組語中的其中一段程式，有可能一行程式碼對到十行組語，如果你使用 [si] 或 [ni] 都只能一行執行一行組語，而若是我們想直接執行一個程式碼，
+就可以使用 next ，有一點要特別注意的是，當你 compile 程式碼的時候要使用 g++ -g ，開始 debug mode 才能用這個功能 。
+
+[c] continue 執行到下一行 breakpoint
+continue 的縮寫是 c ，功能很容易懂，就會直接執行直到下一個 breakpoint ，當然你要記得先設定 breakpoint ，例如 b *0x00000450400
+
+資料來源:https://www.puritys.me/docs-blog/article-329-%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-GDB-Debug.html
+
+
+
+
+
+
+
+
+
+
